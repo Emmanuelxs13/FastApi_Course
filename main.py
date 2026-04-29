@@ -1,12 +1,12 @@
-from fastapi import Body, FastAPI
+from fastapi import Body, FastAPI, Path, Query
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 from typing import Optional, List
 
-movies: List[Movie] = []
 
 app = FastAPI()
 
+movies: List[Movie] = []
 
 class Movie(BaseModel):
     id: int
@@ -47,19 +47,19 @@ def get_movies() -> List[Movie]:
 
 
 @app.get('/movies/{id}', tags=['Movies'])
-def get_movie(id: int) -> Movie:
+def get_movie(id: int = Path(gt=0)) -> Movie | dict:
     for movie in movies:
         if movie['id'] == id:
             return movie.model_dump()
-    return []
+    return {}
 
 
 @app.get('/movies/', tags=['Movies'])
-def get_movie_by_category(category: str, year: int) -> Movie:
+def get_movie_by_category(category: str = Query(min_length=5, max_length=20)) -> Movie | dict:
     for movie in movies:
-        if movie['category'] == category:
+        if movie.category == category:
             return movie.model_dump()
-        return []
+        return {}
 
 
 @app.post('/movies', tags=['Movies'])
