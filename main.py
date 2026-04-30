@@ -1,6 +1,6 @@
 from fastapi import Body, FastAPI, Path, Query
 from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse, RedirectResponse, FileResponse
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 from typing import Optional, List
 
 
@@ -33,6 +33,11 @@ class MovieCreate(BaseModel):
         }
     }
 
+@validator('title')
+def validate_title(cls, value):
+    if not value.isalnum():
+        raise ValueError('Title must be alphanumeric')
+    return value
 
 class MovieUpdate(BaseModel):
     title: str
