@@ -75,4 +75,4 @@ def delete_movie(id: int) -> List[Movie]:
             content = [movie.model_dump() for movie in movies]
             return JSONResponse(content=content)
 
-
+ 
